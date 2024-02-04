@@ -2,48 +2,60 @@ package org.wenant.service.in;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mockito;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.wenant.domain.entity.User;
 import org.wenant.service.UserService;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
+import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.Mockito.*;
 
-class AuthServiceTest {
+@ExtendWith(MockitoExtension.class)
+public class AuthServiceTest {
+
+    @Mock
+    private UserService userService;
+
+    @InjectMocks
+    private AuthService authService;
 
     @Test
-    void authenticateUser_validCredentials_returnsAuthenticatedUser() {
+    public void whenAuthenticateUserWithValidCredentials_thenReturnUser() {
+        String username = "user1";
+        String password = "password123";
+        User user = new User(1L, username, password, User.Role.USER);
+        when(userService.getUserByUsername(username)).thenReturn(user);
 
-        String username = "testUser";
-        String password = "testPassword";
-        String role = "testRole";
-        User testUser = new User(username, password, role);
+        User result = authService.authenticateUser(username, password);
 
-        UserService userServiceMock = Mockito.mock(UserService.class);
-        AuthService authService = new AuthService(userServiceMock);
-        Mockito.when(userServiceMock.getUserByUsername(username)).thenReturn(testUser);
-
-        User authenticatedUser = authService.authenticateUser(username, password);
-        assertEquals(testUser, authenticatedUser);
+        verify(userService, times(1)).getUserByUsername(username);
+        assertEquals(user, result);
     }
 
     @Test
-    void authenticateUser_invalidCredentials_returnsNull() {
+    public void whenAuthenticateUserWithInvalidCredentials_thenReturnNull() {
+        String username = "user1";
+        String password = "invalidPassword";
+        User user = new User(1L, username, "correctPassword", User.Role.USER);
+        when(userService.getUserByUsername(username)).thenReturn(user);
 
-        String username = "testUser";
-        String password = "correctPassword";
-        String role = "testRole";
+        User result = authService.authenticateUser(username, password);
 
-        UserService userServiceMock = Mockito.mock(UserService.class);
+        verify(userService, times(1)).getUserByUsername(username);
+        assertNull(result);
+    }
 
-        AuthService authService = new AuthService(userServiceMock);
+    @Test
+    public void whenAuthenticateUserWithNonExistingUsername_thenReturnNull() {
+        String nonExistingUsername = "nonExistingUser";
+        when(userService.getUserByUsername(nonExistingUsername)).thenReturn(null);
 
-        // Создаем тестового пользователя
-        User testUser = new User(username, "incorrectPassword", role);
-        Mockito.when(userServiceMock.getUserByUsername(username)).thenReturn(testUser);
+        User result = authService.authenticateUser(nonExistingUsername, "password123");
 
-        User authenticatedUser = authService.authenticateUser(username, password);
-        assertNull(authenticatedUser);
+        verify(userService, times(1)).getUserByUsername(nonExistingUsername);
+        assertNull(result);
     }
 }

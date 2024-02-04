@@ -17,7 +17,7 @@
 
 ## Инструкции по сборке и запуску
 
-1. Склонируйте проект.
-2. Откройте проект в вашей среде разработки.
-3. Запустите класс `ConsoleApp` из пакета `org.wenant.console`.
+- docker-compose build
+- docker-compose run -i --rm your_app
+
 

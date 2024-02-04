@@ -31,4 +31,12 @@ public interface UserRepository {
      */
     User getUserByUsername(String username);
 
+    /**
+     * Получает пользователя по его уникальному идентификатору.
+     *
+     * @param id Уникальный идентификатор пользователя.
+     * @return Объект пользователя, если найден, иначе null.
+     */
+    User getUserById(Long id);
+
 }

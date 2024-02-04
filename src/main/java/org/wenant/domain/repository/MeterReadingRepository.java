@@ -1,11 +1,11 @@
 package org.wenant.domain.repository;
 
 import org.wenant.domain.entity.MeterReading;
+import org.wenant.domain.entity.MeterTypeCatalog;
 import org.wenant.domain.entity.User;
 
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Интерфейс для работы с показаниями счетчиков.
@@ -23,9 +23,9 @@ public interface MeterReadingRepository {
      * Получает все показания счетчиков для указанного пользователя.
      *
      * @param user Пользователь, для которого нужно получить показания.
-     * @return Map, где ключ - это месяц и год, а значение - список показаний счетчиков.
+     * @return Список показаний счетчиков.
      */
-    Map<YearMonth, List<MeterReading>> getAllForUser(User user);
+    List<MeterReading> getAllForUser(User user);
 
     /**
      * Получает показания счетчиков для указанного пользователя и даты.
@@ -40,18 +40,17 @@ public interface MeterReadingRepository {
      * Получает последние актуальные показания счетчиков для указанного пользователя.
      *
      * @param user Пользователь, для которого нужно получить показания.
-     * @return Map, где ключ - это месяц и год, а значение - список показаний счетчиков.
+     * @return Список показаний счетчиков.
      */
-    Map<YearMonth, List<MeterReading>> getLatestMeterReadings(User user);
+    List<MeterReading> getLatestMeterReadings(User user);
 
     /**
-     * Проверяет существование показания счетчика для указанного пользователя, даты и типа счетчика.
+     * Проверяет, существуют ли показания счетчика для указанного пользователя, даты и типа счетчика.
      *
-     * @param user     Пользователь.
-     * @param date     Дата.
-     * @param meterType Тип счетчика.
-     * @return true, если показание существует, иначе false.
+     * @param user              Пользователь, для которого нужно проверить наличие показаний.
+     * @param date              Дата, для которой нужно проверить наличие показаний.
+     * @param meterTypeCatalog  Тип счетчика, для которого нужно проверить наличие показаний.
+     * @return true, если показания существуют, иначе false.
      */
-    boolean isMeterReadingExists(User user, YearMonth date, String meterType);
-
+    boolean isMeterReadingExists(User user, YearMonth date, MeterTypeCatalog meterTypeCatalog);
 }

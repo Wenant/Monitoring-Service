@@ -1,21 +1,33 @@
 package org.wenant;
 
+import liquibase.Liquibase;
+import liquibase.database.Database;
+import liquibase.database.DatabaseFactory;
+import liquibase.database.jvm.JdbcConnection;
+import liquibase.exception.LiquibaseException;
+import liquibase.resource.ClassLoaderResourceAccessor;
+import org.wenant.database.DatabaseConnector;
+import org.wenant.database.MigrationRunner;
 import org.wenant.domain.entity.AuditLog;
 import org.wenant.domain.entity.MeterReading;
+import org.wenant.domain.entity.MeterTypeCatalog;
 import org.wenant.domain.entity.User;
-import org.wenant.domain.repository.InMemoryMeterReadingRepository;
-import org.wenant.domain.repository.InMemoryUserRepository;
-import org.wenant.domain.repository.MeterReadingRepository;
-import org.wenant.domain.repository.UserRepository;
-import org.wenant.service.*;
+import org.wenant.domain.entity.User.Role;
+import org.wenant.domain.repository.*;
+import org.wenant.service.UserService;
 import org.wenant.service.in.AuthService;
 import org.wenant.service.in.MeterReadingService;
-import org.wenant.service.in.MeterTypeCatalog;
+import org.wenant.service.in.MeterTypeCatalogService;
 import org.wenant.service.in.RegistrationService;
 
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.time.YearMonth;
 import java.time.format.DateTimeParseException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.InputMismatchException;
+import java.util.List;
+import java.util.Scanner;
 
 /**
  * Класс, представляющий консольное приложение для работы с системой учета показаний счетчиков.
@@ -25,26 +37,26 @@ public class ConsoleApp {
     private final MeterReadingService meterReadingService;
     private final RegistrationService registrationService;
     private final AuthService authService;
-    private final MeterTypeCatalog meterTypeCatalog;
+    private final MeterTypeCatalogService meterTypeCatalogService;
     private final List<AuditLog> auditLog = new ArrayList<>();
     private final Scanner scanner;
 
     /**
      * Конструктор класса ConsoleApp.
      *
-     * @param userService           Сервис пользователей.
-     * @param meterReadingService   Сервис показаний счетчиков.
-     * @param registrationService   Сервис регистрации пользователей.
-     * @param authService           Сервис аутентификации пользователей.
-     * @param meterTypeCatalog      Каталог типов счетчиков.
-     * @param scanner               Объект Scanner для ввода с консоли.
+     * @param userService             Сервис пользователей.
+     * @param meterReadingService     Сервис показаний счетчиков.
+     * @param registrationService     Сервис регистрации пользователей.
+     * @param authService             Сервис аутентификации пользователей.
+     * @param meterTypeCatalogService Каталог типов счетчиков.
+     * @param scanner                 Объект Scanner для ввода с консоли.
      */
-    public ConsoleApp(UserService userService, MeterReadingService meterReadingService, RegistrationService registrationService, AuthService authService, MeterTypeCatalog meterTypeCatalog, Scanner scanner) {
+    public ConsoleApp(UserService userService, MeterReadingService meterReadingService, RegistrationService registrationService, AuthService authService, MeterTypeCatalogService meterTypeCatalogService, Scanner scanner) {
         this.userService = userService;
         this.meterReadingService = meterReadingService;
         this.registrationService = registrationService;
         this.authService = authService;
-        this.meterTypeCatalog = meterTypeCatalog;
+        this.meterTypeCatalogService = meterTypeCatalogService;
         this.scanner = scanner;
     }
 
@@ -52,19 +64,22 @@ public class ConsoleApp {
      * Точка входа в приложение.
      */
     public static void main(String[] args) {
-        UserRepository userRepository = new InMemoryUserRepository();
+        UserRepository userRepository = new JdbcUserRepository();
         UserService userService = new UserService(userRepository);
 
-        MeterReadingRepository meterReadingRepository = new InMemoryMeterReadingRepository();
+        MeterTypeCatalogRepository meterTypeCatalogRepository = new JdbcMeterTypeCatalogRepository();
+        MeterReadingRepository meterReadingRepository = new JdbcMeterReadingRepository(meterTypeCatalogRepository);
         MeterReadingService meterReadingService = new MeterReadingService(meterReadingRepository);
+
+        MeterTypeCatalogService meterTypeCatalogService = new MeterTypeCatalogService(meterTypeCatalogRepository);
 
         RegistrationService registrationService = new RegistrationService(userRepository);
         AuthService authService = new AuthService(userService);
-        MeterTypeCatalog meterTypeCatalog = new MeterTypeCatalog();
+
         Scanner scanner = new Scanner(System.in);
+        ConsoleApp consoleApp = new ConsoleApp(userService, meterReadingService, registrationService, authService, meterTypeCatalogService, scanner);
 
-        ConsoleApp consoleApp = new ConsoleApp(userService, meterReadingService, registrationService, authService, meterTypeCatalog, scanner);
-
+        MigrationRunner.runMigrations();
 
         int choice;
 
@@ -84,7 +99,7 @@ public class ConsoleApp {
                 case 2:
                     User authenticatedUser = consoleApp.authenticateUser();
                     if (authenticatedUser != null) {
-                        if ("admin".equals(authenticatedUser.getRole())) {
+                        if (authenticatedUser.getRole() == Role.ADMIN) {
                             // Меню для админа
                             int adminChoice;
                             do {
@@ -124,7 +139,7 @@ public class ConsoleApp {
                                 }
 
                             } while (adminChoice != 0);
-                        } else if ("user".equals(authenticatedUser.getRole())) {
+                        } else if (authenticatedUser.getRole() == Role.USER) {
                             // Меню для пользователя
                             int userChoice;
                             do {
@@ -140,7 +155,7 @@ public class ConsoleApp {
 
                                 switch (userChoice) {
                                     case 1:
-                                        consoleApp.addNewMeterReadingsForUser(authenticatedUser, meterTypeCatalog);
+                                        consoleApp.addNewMeterReadingsForUser(authenticatedUser, meterTypeCatalogService);
                                         break;
                                     case 2:
                                         consoleApp.displayMeterReadingsByUserAndDate(authenticatedUser);
@@ -185,6 +200,7 @@ public class ConsoleApp {
         System.out.println("Пароль пользователя: ");
         String password = scanner.nextLine();
 
+        // Выполняем регистрацию пользователя и обрабатываем результат
         switch (registrationService.registerUser(username, password)) {
             case SUCCESS:
                 auditLog.add(new AuditLog(username, "Успешная регистрация пользователя"));
@@ -202,7 +218,6 @@ public class ConsoleApp {
             default:
                 System.out.println("Неизвестный статус регистрации.");
         }
-
     }
 
     /**
@@ -216,6 +231,7 @@ public class ConsoleApp {
         System.out.println("Пароль пользователя: ");
         String password = scanner.nextLine();
 
+        // Пытаемся аутентифицировать пользователя и обрабатываем результат
         User authenticatedUser = authService.authenticateUser(username, password);
 
         if (authenticatedUser != null) {
@@ -227,6 +243,7 @@ public class ConsoleApp {
             return null;
         }
     }
+
 
     /**
      * Отображает всех пользователей в системе.
@@ -247,35 +264,35 @@ public class ConsoleApp {
     public void addNewMeterType(User authenticatedUser) {
         System.out.println("Введите название для нового счетчика");
         String newMeterType = scanner.nextLine();
-        meterTypeCatalog.addMeterType(newMeterType);
+        meterTypeCatalogService.addMeterType(newMeterType);
         auditLog.add(new AuditLog(authenticatedUser.getUsername(), "Добавление нового счетчика"));
     }
 
     /**
      * Добавляет новые показания счетчиков для пользователя.
      *
-     * @param authenticatedUser Аутентифицированный пользователь, добавляющий показания.
-     * @param meterTypeCatalog  Каталог типов счетчиков.
+     * @param authenticatedUser       Аутентифицированный пользователь, добавляющий показания.
+     * @param meterTypeCatalogService Каталог типов счетчиков.
      */
-    public void addNewMeterReadingsForUser(User authenticatedUser, MeterTypeCatalog meterTypeCatalog) {
-        List<String> meterTypes = meterTypeCatalog.getMeterTypes();
+    public void addNewMeterReadingsForUser(User authenticatedUser, MeterTypeCatalogService meterTypeCatalogService) {
+        List<MeterTypeCatalog> meterTypes = meterTypeCatalogService.getMeterTypes();
         YearMonth date = YearMonth.now();
 
-        for (String meterType : meterTypes) {
-            if (isMeterReadingExists(authenticatedUser, date, meterType)) {
-                System.out.println("Показания для " + meterType + " уже были введены в этом месяце.");
+        for (MeterTypeCatalog type : meterTypes) {
+            if (isMeterReadingExists(authenticatedUser, date, type)) {
+                System.out.println("Показания для " + type.getMeterType() + " уже были введены в этом месяце.");
                 continue;
             }
 
             try {
-                System.out.println(meterType + ": ");
+                System.out.println(type.getMeterType() + ": ");
                 double value = scanner.nextDouble();
                 scanner.nextLine();
 
-                MeterReading meterReading = new MeterReading(authenticatedUser, value, date, meterType);
+                MeterReading meterReading = new MeterReading(authenticatedUser, value, date, type);
                 meterReadingService.addNew(meterReading);
                 auditLog.add(new AuditLog(authenticatedUser.getUsername(),
-                        "Добавление показаний для счетчика " + meterType));
+                        "Добавление показаний для счетчика " + type));
             } catch (InputMismatchException e) {
                 System.out.println("Ошибка: Некорректный формат ввода.");
                 scanner.nextLine();
@@ -283,17 +300,19 @@ public class ConsoleApp {
         }
     }
 
+
     /**
-     * Проверяет, существуют ли уже показания для указанного пользователя, даты и типа счетчика.
+     * Проверяет существование показаний счетчика для пользователя на указанную дату.
      *
-     * @param user      Пользователь.
-     * @param date      Дата.
-     * @param meterType Тип счетчика.
-     * @return true, если показания уже существуют, иначе false.
+     * @param user              Пользователь, для которого проверяется наличие показаний.
+     * @param date              Дата, на которую проверяется наличие показаний.
+     * @param meterTypeCatalog Каталог типов счетчиков, для которого проверяется наличие показаний.
+     * @return true, если показания существуют, иначе false.
      */
-    private boolean isMeterReadingExists(User user, YearMonth date, String meterType) {
-        return meterReadingService.isMeterReadingExists(user, date, meterType);
+    private boolean isMeterReadingExists(User user, YearMonth date, MeterTypeCatalog meterTypeCatalog) {
+        return meterReadingService.isMeterReadingExists(user, date, meterTypeCatalog);
     }
+
 
     /**
      * Отображает список показаний счетчиков.
@@ -305,7 +324,7 @@ public class ConsoleApp {
             System.out.printf("Пользователь: %s, Дата: %s, %s: %.2f%n",
                     meterReading.getUser().getUsername(),
                     meterReading.getDate(),
-                    meterReading.getMeterType(),
+                    meterReading.getMeterTypeCatalog().getMeterType(),
                     meterReading.getValue());
         }
     }
@@ -317,14 +336,13 @@ public class ConsoleApp {
      * @return Пользователь для отображения.
      */
     private User getUserForDisplay(User authenticatedUser) {
-        if ("admin".equals(authenticatedUser.getRole())) {
+        if (authenticatedUser.getRole() == Role.ADMIN) {
             System.out.println("Имя пользователя: ");
             return userService.getUserByUsername(scanner.nextLine());
         } else {
             return authenticatedUser;
         }
     }
-
 
     /**
      * Отображает историю подачи показаний для пользователя.
@@ -333,17 +351,16 @@ public class ConsoleApp {
      */
     public void displayUserMeterReadings(User authenticatedUser) {
         User userToDisplay = getUserForDisplay(authenticatedUser);
-        Map<YearMonth, List<MeterReading>> userReadings = meterReadingService.getAllForUser(userToDisplay);
+        List<MeterReading> userReadings = meterReadingService.getAllForUser(userToDisplay);
 
         if (userReadings.isEmpty()) {
             System.out.println("Еще нет показаний.");
         }
 
         auditLog.add(new AuditLog(authenticatedUser.getUsername(),
-                "Просмотр истории подачи показаний пользователея: " + userToDisplay.getUsername()));
-        for (List<MeterReading> meterReadings : userReadings.values()) {
-            displayMeterReadings(meterReadings);
-        }
+                "Просмотр истории подачи показаний пользователя: " + userToDisplay.getUsername()));
+
+        displayMeterReadings(userReadings);
     }
 
     /**
@@ -381,22 +398,17 @@ public class ConsoleApp {
      */
     public List<MeterReading> getLatestMeterReadings(User authenticatedUser) {
         User userToDisplay = getUserForDisplay(authenticatedUser);
-        Map<YearMonth, List<MeterReading>> userReadings = meterReadingService.getLatestMeterReadings(userToDisplay);
+        List<MeterReading> userReadings = meterReadingService.getLatestMeterReadings(userToDisplay);
 
 
-        YearMonth latestMonth = userReadings.keySet().stream()
-                .max(Comparator.naturalOrder())
-                .orElse(null);
-
-        if (latestMonth != null) {
+        if (userReadings != null) {
             auditLog.add(new AuditLog(authenticatedUser.getUsername(),
-                    "Получение актуальных показаний пользователя: " + userToDisplay.getUsername()));
-            List<MeterReading> latestMeterReadings = userReadings.getOrDefault(latestMonth, Collections.emptyList());
-            displayMeterReadings(latestMeterReadings);
-            return latestMeterReadings;
+                    "Актуальные показания пользователя: " + userToDisplay.getUsername()));
+            displayMeterReadings(userReadings);
+            return userReadings;
         } else {
             System.out.println("Нет показаний для пользователя " + userToDisplay.getUsername());
-            return Collections.emptyList();
+            return null;
         }
     }
 
