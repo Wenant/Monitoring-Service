@@ -17,6 +17,7 @@
 
 ## Инструкции по сборке и запуску
 
+- mvn clean package
 - docker-compose build
 - docker-compose run -i --rm your_app
 
