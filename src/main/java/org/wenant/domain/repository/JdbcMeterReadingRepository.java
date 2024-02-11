@@ -5,10 +5,7 @@ import org.wenant.domain.entity.MeterReading;
 import org.wenant.domain.entity.MeterTypeCatalog;
 import org.wenant.domain.entity.User;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.time.LocalDate;
 import java.time.YearMonth;
 import java.util.ArrayList;
@@ -24,12 +21,12 @@ public class JdbcMeterReadingRepository implements MeterReadingRepository {
         this.meterTypeCatalogRepository = meterTypeCatalogRepository;
     }
 
-    private java.sql.Date getSqlDate(YearMonth yearMonth) {
+    private Date getSqlDate(YearMonth yearMonth) {
         LocalDate localDate = yearMonth.atDay(1);
-        return java.sql.Date.valueOf(localDate);
+        return Date.valueOf(localDate);
     }
 
-    private YearMonth setDate(java.sql.Date date) {
+    private YearMonth setDate(Date date) {
         LocalDate localDate = date.toLocalDate();
         return YearMonth.of(localDate.getYear(), localDate.getMonth());
     }

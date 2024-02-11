@@ -9,6 +9,7 @@ import java.sql.SQLException;
  */
 public class DatabaseConnector {
 
+
     /**
      * Устанавливает соединение с базой данных.
      *
@@ -17,6 +18,7 @@ public class DatabaseConnector {
      */
     public static Connection connection() throws SQLException {
         try {
+            Class.forName(DatabaseConfig.getDbDriver());
             var URL = DatabaseConfig.getDbUrl();
             var USER_NAME = DatabaseConfig.getDbUsername();
             var PASSWORD = DatabaseConfig.getDbPassword();
@@ -25,6 +27,8 @@ public class DatabaseConnector {
         } catch (SQLException e) {
             System.err.println(e.getMessage());
             return null;
+        } catch (ClassNotFoundException e) {
+            throw new RuntimeException(e);
         }
     }
 

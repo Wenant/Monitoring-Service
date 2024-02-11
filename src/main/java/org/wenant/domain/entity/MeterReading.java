@@ -30,10 +30,10 @@ public class MeterReading {
     /**
      * Конструктор класса MeterReading.
      *
-     * @param user              Пользователь, для которого введены показания.
-     * @param value             Значение показаний счетчика.
-     * @param date              Дата, к которой относятся показания.
-     * @param meterTypeCatalog  Тип счетчика.
+     * @param user             Пользователь, для которого введены показания.
+     * @param value            Значение показаний счетчика.
+     * @param date             Дата, к которой относятся показания.
+     * @param meterTypeCatalog Тип счетчика.
      */
     public MeterReading(User user, double value, YearMonth date, MeterTypeCatalog meterTypeCatalog) {
         this.user = user;

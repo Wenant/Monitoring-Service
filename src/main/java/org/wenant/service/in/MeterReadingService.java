@@ -1,9 +1,13 @@
 package org.wenant.service.in;
 
+import org.wenant.domain.dto.MeterReadingDto;
+import org.wenant.domain.dto.ReadingDto;
 import org.wenant.domain.entity.MeterReading;
 import org.wenant.domain.entity.MeterTypeCatalog;
 import org.wenant.domain.entity.User;
 import org.wenant.domain.repository.MeterReadingRepository;
+import org.wenant.mapper.MeterReadingMapper;
+import org.wenant.service.UserService;
 
 import java.time.YearMonth;
 import java.util.List;
@@ -15,54 +19,71 @@ import java.util.List;
 public class MeterReadingService {
 
     private final MeterReadingRepository meterReadingRepository;
+    private final MeterTypeCatalogService meterTypeCatalogService;
+    private final UserService userService;
 
-    /**
-     * Конструктор класса MeterReadingService.
-     *
-     * @param meterReadingRepository Репозиторий для сохранения и получения данных о показаниях счетчиков.
-     */
-    public MeterReadingService(MeterReadingRepository meterReadingRepository) {
+    public MeterReadingService(MeterReadingRepository meterReadingRepository, MeterTypeCatalogService meterTypeCatalogService, UserService userService) {
         this.meterReadingRepository = meterReadingRepository;
+        this.meterTypeCatalogService = meterTypeCatalogService;
+        this.userService = userService;
     }
 
-    /**
-     * Добавляет новые показания счетчиков.
-     *
-     * @param meterReading Объект MeterReading, представляющий новые показания.
-     */
-    public void addNew(MeterReading meterReading) {
-        meterReadingRepository.save(meterReading);
+
+//    public void addNew(MeterReading meterReading) {
+//        meterReadingRepository.save(meterReading);
+//    }meterReadingDto
+
+
+    public void addNew(ReadingDto readingDto, String username) {
+        MeterTypeCatalog meterType = meterTypeCatalogService.getMeterTypeById(readingDto.getTypeId());
+        if (meterType != null) {
+            User user = userService.getUserByUsername(username);
+            YearMonth date = YearMonth.now();
+            MeterReading newMeterReading = new MeterReading(user, readingDto.getValue(), date, meterType);
+            if (!meterReadingRepository.isMeterReadingExists(user, date, meterType)) {
+                meterReadingRepository.save(newMeterReading);
+            } else {
+                throw new IllegalArgumentException("Already exists");
+            }
+
+        } else {
+            throw new IllegalArgumentException("Invalid meterType");
+        }
+
     }
 
     /**
      * Получает все показания счетчиков для конкретного пользователя.
      *
-     * @param user Пользователь, для которого нужно получить показания счетчиков.
+     * @param username Пользователь, для которого нужно получить показания счетчиков.
      * @return Список MeterReading, содержащий показания счетчиков для указанного пользователя.
      */
-    public List<MeterReading> getAllForUser(User user) {
-        return meterReadingRepository.getAllForUser(user);
+    public List<MeterReadingDto> getAllForUser(String username) {
+        User user = userService.getUserByUsername(username);
+        return MeterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getAllForUser(user));
     }
 
     /**
      * Получает показания счетчиков для конкретного пользователя на определенную дату.
      *
-     * @param user Пользователь, для которого нужно получить показания счетчиков.
-     * @param date Дата, на которую нужно получить показания счетчиков.
+     * @param username Пользователь, для которого нужно получить показания счетчиков.
+     * @param date     Дата, на которую нужно получить показания счетчиков.
      * @return Список MeterReading, представляющий показания счетчиков на указанную дату.
      */
-    public List<MeterReading> getByUserAndDate(User user, YearMonth date) {
-        return meterReadingRepository.getByUserAndDate(user, date);
+    public List<MeterReadingDto> getByUserAndDate(String username, YearMonth date) {
+        User user = userService.getUserByUsername(username);
+        return MeterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getByUserAndDate(user, date));
     }
 
     /**
      * Получает актуальные показания счетчиков для конкретного пользователя.
      *
-     * @param user Пользователь, для которого нужно получить актуальные показания счетчиков.
+     * @param username Пользователь, для которого нужно получить актуальные показания счетчиков.
      * @return Список MeterReading, содержащий актуальные показания счетчиков для указанного пользователя.
      */
-    public List<MeterReading> getLatestMeterReadings(User user) {
-        return meterReadingRepository.getLatestMeterReadings(user);
+    public List<MeterReadingDto> getLatestMeterReadings(String username) {
+        User user = userService.getUserByUsername(username);
+        return MeterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getLatestMeterReadings(user));
     }
 
     /**

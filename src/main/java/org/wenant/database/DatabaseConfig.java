@@ -51,5 +51,9 @@ public class DatabaseConfig {
         return properties.getProperty("db.password");
     }
 
+    public static String getDbDriver() {
+        return properties.getProperty("db.driver");
+    }
+
 
 }
