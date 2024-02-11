@@ -25,21 +25,21 @@ public class MeterReading {
     /**
      * Тип счетчика.
      */
-    private final String meterType;
+    private final MeterTypeCatalog meterTypeCatalog;
 
     /**
      * Конструктор класса MeterReading.
      *
-     * @param user      Пользователь, для которого введены показания.
-     * @param value     Значение показаний счетчика.
-     * @param date      Дата, к которой относятся показания.
-     * @param meterType Тип счетчика.
+     * @param user              Пользователь, для которого введены показания.
+     * @param value             Значение показаний счетчика.
+     * @param date              Дата, к которой относятся показания.
+     * @param meterTypeCatalog  Тип счетчика.
      */
-    public MeterReading(User user, double value, YearMonth date, String meterType) {
+    public MeterReading(User user, double value, YearMonth date, MeterTypeCatalog meterTypeCatalog) {
         this.user = user;
         this.value = value;
         this.date = date;
-        this.meterType = meterType;
+        this.meterTypeCatalog = meterTypeCatalog;
     }
 
     /**
@@ -47,8 +47,8 @@ public class MeterReading {
      *
      * @return Тип счетчика.
      */
-    public String getMeterType() {
-        return meterType;
+    public MeterTypeCatalog getMeterTypeCatalog() {
+        return meterTypeCatalog;
     }
 
     /**
@@ -89,7 +89,7 @@ public class MeterReading {
                 "user=" + user +
                 ", value=" + value +
                 ", date=" + date +
-                ", meterType='" + meterType + '\'' +
+                ", meterType='" + meterTypeCatalog.getMeterType() + '\'' +
                 '}';
     }
 }

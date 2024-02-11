@@ -1,12 +1,12 @@
 package org.wenant.service.in;
 
 import org.wenant.domain.entity.MeterReading;
+import org.wenant.domain.entity.MeterTypeCatalog;
 import org.wenant.domain.entity.User;
 import org.wenant.domain.repository.MeterReadingRepository;
 
 import java.time.YearMonth;
 import java.util.List;
-import java.util.Map;
 
 /**
  * Сервис для управления показаниями счетчиков.
@@ -38,9 +38,9 @@ public class MeterReadingService {
      * Получает все показания счетчиков для конкретного пользователя.
      *
      * @param user Пользователь, для которого нужно получить показания счетчиков.
-     * @return Map, содержащая показания счетчиков, сгруппированные по месяцам.
+     * @return Список MeterReading, содержащий показания счетчиков для указанного пользователя.
      */
-    public Map<YearMonth, List<MeterReading>> getAllForUser(User user) {
+    public List<MeterReading> getAllForUser(User user) {
         return meterReadingRepository.getAllForUser(user);
     }
 
@@ -59,21 +59,21 @@ public class MeterReadingService {
      * Получает актуальные показания счетчиков для конкретного пользователя.
      *
      * @param user Пользователь, для которого нужно получить актуальные показания счетчиков.
-     * @return Map, содержащая актуальные показания счетчиков, сгруппированные по месяцам.
+     * @return Список MeterReading, содержащий актуальные показания счетчиков для указанного пользователя.
      */
-    public Map<YearMonth, List<MeterReading>> getLatestMeterReadings(User user) {
+    public List<MeterReading> getLatestMeterReadings(User user) {
         return meterReadingRepository.getLatestMeterReadings(user);
     }
 
     /**
-     * Проверяет, существуют ли показания счетчика для указанного пользователя, даты и типа счетчика.
+     * Проверяет существование показаний счетчика для конкретного пользователя, на указанную дату и тип счетчика.
      *
-     * @param user      Пользователь, для которого нужно проверить наличие показаний счетчика.
-     * @param date      Дата, на которую нужно проверить наличие показаний счетчика.
-     * @param meterType Тип счетчика, для которого нужно проверить наличие показаний.
-     * @return true, если показания счетчика существуют, в противном случае false.
+     * @param user             Пользователь, для которого выполняется проверка.
+     * @param date             Дата, для которой выполняется проверка.
+     * @param meterTypeCatalog Тип счетчика, для которого выполняется проверка.
+     * @return true, если показания существуют, в противном случае - false.
      */
-    public boolean isMeterReadingExists(User user, YearMonth date, String meterType) {
-        return meterReadingRepository.isMeterReadingExists(user, date, meterType);
+    public boolean isMeterReadingExists(User user, YearMonth date, MeterTypeCatalog meterTypeCatalog) {
+        return meterReadingRepository.isMeterReadingExists(user, date, meterTypeCatalog);
     }
 }

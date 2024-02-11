@@ -40,4 +40,3 @@ public class UserService {
         return userRepository.getUserByUsername(username);
     }
 }
-

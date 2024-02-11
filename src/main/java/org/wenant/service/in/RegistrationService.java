@@ -42,16 +42,28 @@ public class RegistrationService {
             return RegistrationResult.USERNAME_ALREADY_EXISTS;
         }
 
-        User newUser = new User(username, password, "user"); // Роль "user" при регистрации
+        User newUser = new User(null, username, password, User.Role.USER); // Роль "user" при регистрации
         userRepository.addUser(newUser);
 
         return RegistrationResult.SUCCESS;
     }
 
+    /**
+     * Проверяет, является ли пароль допустимым.
+     *
+     * @param password Пароль для проверки.
+     * @return true, если пароль допустим, иначе false.
+     */
     private boolean isValidPassword(String password) {
         return password != null && password.length() >= 3;
     }
 
+    /**
+     * Проверяет, является ли имя пользователя допустимым.
+     *
+     * @param username Имя пользователя для проверки.
+     * @return true, если имя пользователя допустимо, иначе false.
+     */
     private boolean isValidUsername(String username) {
         return username != null && username.length() >= 3;
     }

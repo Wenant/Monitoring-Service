@@ -4,26 +4,37 @@ package org.wenant.domain.entity;
  * Класс представляет сущность пользователя.
  */
 public class User {
-
-    private final String role;
+    private final Long id;
+    private final Role role;
     private final String username;
     private final String password;
 
     /**
      * Конструктор для создания объекта пользователя с указанными параметрами.
      *
+     * @param id       Уникальный идентификатор пользователя.
      * @param username Имя пользователя.
      * @param password Пароль пользователя.
      * @param role     Роль пользователя.
      */
-    public User(String username, String password, String role) {
+    public User(Long id, String username, String password, Role role) {
+        this.id = id;
         this.username = username;
         this.password = password;
         this.role = role;
     }
 
     /**
-     * Получает имя пользователя.
+     * Получить уникальный идентификатор пользователя.
+     *
+     * @return Уникальный идентификатор пользователя.
+     */
+    public Long getId() {
+        return id;
+    }
+
+    /**
+     * Получить имя пользователя.
      *
      * @return Имя пользователя.
      */
@@ -32,7 +43,7 @@ public class User {
     }
 
     /**
-     * Получает пароль пользователя.
+     * Получить пароль пользователя.
      *
      * @return Пароль пользователя.
      */
@@ -41,11 +52,11 @@ public class User {
     }
 
     /**
-     * Получает роль пользователя.
+     * Получить роль пользователя.
      *
      * @return Роль пользователя.
      */
-    public String getRole() {
+    public Role getRole() {
         return role;
     }
 
@@ -56,6 +67,21 @@ public class User {
      */
     @Override
     public String toString() {
-        return "\n Имя пользователя: " + username + ", Роль: " + role;
+        return "\nИмя пользователя: " + username + ", Роль: " + role;
+    }
+
+    /**
+     * Перечисление представляет роли пользователя.
+     */
+    public enum Role {
+        /**
+         * Роль администратора.
+         */
+        ADMIN,
+
+        /**
+         * Роль пользователя.
+         */
+        USER
     }
 }
