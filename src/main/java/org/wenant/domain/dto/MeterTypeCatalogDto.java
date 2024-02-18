@@ -6,7 +6,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 
 @JsonInclude
 public class MeterTypeCatalogDto {
-
     private final Long id;
     private final String meterType;
 
@@ -18,7 +17,6 @@ public class MeterTypeCatalogDto {
         this.id = id;
         this.meterType = meterType;
     }
-
 
     public Long getId() {
         return id;

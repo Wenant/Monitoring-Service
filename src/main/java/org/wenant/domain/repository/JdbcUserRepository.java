@@ -1,8 +1,10 @@
-package org.wenant.domain.repository;
+package org.wenant.domain.repository.impl;
 
+import org.springframework.stereotype.Repository;
 import org.wenant.database.DatabaseConnector;
-import org.wenant.domain.entity.User;
-import org.wenant.domain.entity.User.Role;
+import org.wenant.domain.model.User;
+import org.wenant.domain.model.User.Role;
+import org.wenant.domain.repository.interfaces.UserRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -11,6 +13,7 @@ import java.util.List;
 /**
  * Реализация репозитория пользователей через JDBC.
  */
+@Repository
 public class JdbcUserRepository implements UserRepository {
 
     private String getRoleForDb(User user) {

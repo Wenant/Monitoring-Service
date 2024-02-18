@@ -1,8 +1,9 @@
 package org.wenant.service.in;
 
+import org.springframework.stereotype.Service;
 import org.wenant.domain.dto.MeterTypeCatalogDto;
-import org.wenant.domain.entity.MeterTypeCatalog;
-import org.wenant.domain.repository.MeterTypeCatalogRepository;
+import org.wenant.domain.model.MeterTypeCatalog;
+import org.wenant.domain.repository.interfaces.MeterTypeCatalogRepository;
 import org.wenant.mapper.MeterTypeCatalogMapper;
 
 import java.util.List;
@@ -11,9 +12,10 @@ import java.util.List;
  * Сервис для работы с каталогом типов счетчиков.
  * Предоставляет функциональность добавления новых типов счетчиков и получения списка всех доступных типов.
  */
-
+@Service
 public class MeterTypeCatalogService {
     private final MeterTypeCatalogRepository meterTypeCatalogRepository;
+    private final MeterTypeCatalogMapper meterTypeCatalogMapper;
 
 
     /**
@@ -21,9 +23,11 @@ public class MeterTypeCatalogService {
      *
      * @param meterTypeCatalogRepository Репозиторий каталога типов счетчиков.
      */
-    public MeterTypeCatalogService(MeterTypeCatalogRepository meterTypeCatalogRepository) {
+    public MeterTypeCatalogService(MeterTypeCatalogRepository meterTypeCatalogRepository,
+                                   MeterTypeCatalogMapper meterTypeCatalogMapper) {
 
         this.meterTypeCatalogRepository = meterTypeCatalogRepository;
+        this.meterTypeCatalogMapper = meterTypeCatalogMapper;
     }
 
     /**
@@ -42,7 +46,7 @@ public class MeterTypeCatalogService {
      */
     public List<MeterTypeCatalogDto> getMeterTypes() {
         List<MeterTypeCatalogDto> newCatalog =
-                MeterTypeCatalogMapper.INSTANCE.meterTypeListToDtoList(meterTypeCatalogRepository.getAllMeterTypes());
+                meterTypeCatalogMapper.INSTANCE.meterTypeListToDtoList(meterTypeCatalogRepository.getAllMeterTypes());
         return newCatalog;
     }
 

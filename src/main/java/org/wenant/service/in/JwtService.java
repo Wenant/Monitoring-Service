@@ -4,11 +4,14 @@ package org.wenant.service.in;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
+import org.springframework.stereotype.Service;
+import org.wenant.config.YamlReader;
 import org.wenant.domain.dto.AuthenticationDto;
 import org.wenant.domain.dto.UserDto;
 
+@Service
 public class JwtService {
-    private static final String SECRET_KEY = "p4+ah8Op5+GXShuqV6ZWGF4Go9S0UKtVbSbHy/RzFi8=";
+    private static final String SECRET_KEY = YamlReader.getJwtSecret();
 
     public String generateToken(AuthenticationDto authenticationDto) {
         return Jwts.builder()

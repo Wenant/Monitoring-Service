@@ -1,10 +1,10 @@
 <configuration>
 
-    <root level="DEBUG">
+    <root level="INFO">
         <appender-ref ref="log"/>
     </root>
 
-    <logger level="DEBUG" name="audit" additivity="false">
+    <logger level="INFO" name="audit" additivity="false">
         <appender-ref ref="audit"/>
     </logger>
 

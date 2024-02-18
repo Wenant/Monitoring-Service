@@ -1,9 +1,12 @@
 package org.wenant.domain.repository;
 
+import org.springframework.stereotype.Repository;
 import org.wenant.database.DatabaseConnector;
-import org.wenant.domain.entity.MeterReading;
-import org.wenant.domain.entity.MeterTypeCatalog;
-import org.wenant.domain.entity.User;
+import org.wenant.domain.model.MeterReading;
+import org.wenant.domain.model.MeterTypeCatalog;
+import org.wenant.domain.model.User;
+import org.wenant.domain.repository.interfaces.MeterReadingRepository;
+import org.wenant.domain.repository.interfaces.MeterTypeCatalogRepository;
 
 import java.sql.*;
 import java.time.LocalDate;
@@ -14,6 +17,7 @@ import java.util.List;
 /**
  * Реализация репозитория для показаний счетчиков через JDBC.
  */
+@Repository
 public class JdbcMeterReadingRepository implements MeterReadingRepository {
     private final MeterTypeCatalogRepository meterTypeCatalogRepository;
 

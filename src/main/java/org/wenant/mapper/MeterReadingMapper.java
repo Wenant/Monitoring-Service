@@ -5,12 +5,12 @@ import org.mapstruct.Mapping;
 import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.wenant.domain.dto.MeterReadingDto;
-import org.wenant.domain.entity.MeterReading;
+import org.wenant.domain.model.MeterReading;
 
 import java.time.YearMonth;
 import java.util.List;
 
-@Mapper
+@Mapper(componentModel = "spring")
 public interface MeterReadingMapper {
     MeterReadingMapper INSTANCE = Mappers.getMapper(MeterReadingMapper.class);
 
