@@ -47,9 +47,9 @@ public interface MeterReadingRepository {
     /**
      * Проверяет, существуют ли показания счетчика для указанного пользователя, даты и типа счетчика.
      *
-     * @param user              Пользователь, для которого нужно проверить наличие показаний.
-     * @param date              Дата, для которой нужно проверить наличие показаний.
-     * @param meterTypeCatalog  Тип счетчика, для которого нужно проверить наличие показаний.
+     * @param user             Пользователь, для которого нужно проверить наличие показаний.
+     * @param date             Дата, для которой нужно проверить наличие показаний.
+     * @param meterTypeCatalog Тип счетчика, для которого нужно проверить наличие показаний.
      * @return true, если показания существуют, иначе false.
      */
     boolean isMeterReadingExists(User user, YearMonth date, MeterTypeCatalog meterTypeCatalog);

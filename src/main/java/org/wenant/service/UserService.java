@@ -1,7 +1,9 @@
 package org.wenant.service;
 
+import org.wenant.domain.dto.UserDto;
 import org.wenant.domain.entity.User;
 import org.wenant.domain.repository.UserRepository;
+import org.wenant.mapper.UserMapper;
 
 import java.util.List;
 
@@ -26,8 +28,8 @@ public class UserService {
      *
      * @return Список пользователей.
      */
-    public List<User> getAllUsers() {
-        return userRepository.getAllUsers();
+    public List<UserDto> getAllUsers() {
+        return UserMapper.INSTANCE.userListToUserDtoList(userRepository.getAllUsers());
     }
 
     /**
