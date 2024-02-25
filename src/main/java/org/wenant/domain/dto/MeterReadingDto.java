@@ -41,7 +41,6 @@ public class MeterReadingDto {
         return value;
     }
 
-
     public String getDate() {
         return date;
     }

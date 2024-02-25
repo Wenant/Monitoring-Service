@@ -1,11 +1,12 @@
 package org.wenant.service.in;
 
+import org.springframework.stereotype.Service;
 import org.wenant.domain.dto.MeterReadingDto;
 import org.wenant.domain.dto.ReadingDto;
-import org.wenant.domain.entity.MeterReading;
-import org.wenant.domain.entity.MeterTypeCatalog;
-import org.wenant.domain.entity.User;
-import org.wenant.domain.repository.MeterReadingRepository;
+import org.wenant.domain.model.MeterReading;
+import org.wenant.domain.model.MeterTypeCatalog;
+import org.wenant.domain.model.User;
+import org.wenant.domain.repository.interfaces.MeterReadingRepository;
 import org.wenant.mapper.MeterReadingMapper;
 import org.wenant.service.UserService;
 
@@ -16,25 +17,26 @@ import java.util.List;
  * Сервис для управления показаниями счетчиков.
  * Обеспечивает добавление новых показаний, получение и анализ показаний для пользователя.
  */
+@Service
 public class MeterReadingService {
 
     private final MeterReadingRepository meterReadingRepository;
     private final MeterTypeCatalogService meterTypeCatalogService;
     private final UserService userService;
+    private final MeterReadingMapper meterReadingMapper;
 
-    public MeterReadingService(MeterReadingRepository meterReadingRepository, MeterTypeCatalogService meterTypeCatalogService, UserService userService) {
+    public MeterReadingService(MeterReadingRepository meterReadingRepository,
+                               MeterTypeCatalogService meterTypeCatalogService,
+                               UserService userService,
+                               MeterReadingMapper meterReadingMapper) {
         this.meterReadingRepository = meterReadingRepository;
         this.meterTypeCatalogService = meterTypeCatalogService;
         this.userService = userService;
+        this.meterReadingMapper = meterReadingMapper;
     }
 
 
-//    public void addNew(MeterReading meterReading) {
-//        meterReadingRepository.save(meterReading);
-//    }meterReadingDto
-
-
-    public void addNew(ReadingDto readingDto, String username) {
+    public MeterReadingStatus addNewReading(ReadingDto readingDto, String username) {
         MeterTypeCatalog meterType = meterTypeCatalogService.getMeterTypeById(readingDto.getTypeId());
         if (meterType != null) {
             User user = userService.getUserByUsername(username);
@@ -42,12 +44,13 @@ public class MeterReadingService {
             MeterReading newMeterReading = new MeterReading(user, readingDto.getValue(), date, meterType);
             if (!meterReadingRepository.isMeterReadingExists(user, date, meterType)) {
                 meterReadingRepository.save(newMeterReading);
+                return MeterReadingStatus.SUCCESS;
             } else {
-                throw new IllegalArgumentException("Already exists");
+                return MeterReadingStatus.ALREADY_EXISTS;
             }
 
         } else {
-            throw new IllegalArgumentException("Invalid meterType");
+            return MeterReadingStatus.INVALID_TYPE_ID;
         }
 
     }
@@ -60,7 +63,7 @@ public class MeterReadingService {
      */
     public List<MeterReadingDto> getAllForUser(String username) {
         User user = userService.getUserByUsername(username);
-        return MeterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getAllForUser(user));
+        return meterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getAllForUser(user));
     }
 
     /**
@@ -72,7 +75,7 @@ public class MeterReadingService {
      */
     public List<MeterReadingDto> getByUserAndDate(String username, YearMonth date) {
         User user = userService.getUserByUsername(username);
-        return MeterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getByUserAndDate(user, date));
+        return meterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getByUserAndDate(user, date));
     }
 
     /**
@@ -83,7 +86,7 @@ public class MeterReadingService {
      */
     public List<MeterReadingDto> getLatestMeterReadings(String username) {
         User user = userService.getUserByUsername(username);
-        return MeterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getLatestMeterReadings(user));
+        return meterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getLatestMeterReadings(user));
     }
 
     /**
@@ -96,5 +99,11 @@ public class MeterReadingService {
      */
     public boolean isMeterReadingExists(User user, YearMonth date, MeterTypeCatalog meterTypeCatalog) {
         return meterReadingRepository.isMeterReadingExists(user, date, meterTypeCatalog);
+    }
+
+    public enum MeterReadingStatus {
+        SUCCESS,
+        ALREADY_EXISTS,
+        INVALID_TYPE_ID
     }
 }

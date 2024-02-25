@@ -16,61 +16,84 @@
 - Аудит действий пользователей
 
 ## Эндпоинты
+
 - Получение токена авторизации:
-- - URL: /login
-- - Метод: POST
-{"username": "",
-"password": ""}
+-
+    - URL: /login
+-
+    - Метод: POST
+      {"username": "",
+      "password": ""}
 - Регистрация
-- - URL: /register
-- - Метод: POST
-{"username": "",
-"password": ""}
+-
+    - URL: /registration
+-
+    - Метод: POST
+      {"username": "",
+      "password": ""}
 - Получить список счетчиков
-- - URL: /meterTypes
-- - Метод: GET
+-
+    - URL: /meterTypes
+-
+    - Метод: GET
 
 Для пользователя:
 
 - Добавить новые показания счетчиков:
-- - URL: /readings
-- - Метод: POST
+-
+    - URL: /readings
+-
+    - Метод: POST
 - Просмотр показаний за конкретный месяц:
-- - URL: /readings/{year}/{month}
-- - Метод: GET
+-
+    - URL: /readings/{year}/{month}
+-
+    - Метод: GET
 - Просмотр истории подачи показаний:
-- - URL: /readings/history
-- - Метод: GET- 
+-
+    - URL: /readings/history
+-
+    - Метод: GET-
 - Получить актуальные показания:
-- - URL: /readings/latest
-- - Метод: GET
+-
+    - URL: /readings/latest
+-
+    - Метод: GET
 
+Для администратора:
 
- Для администратора:
 - Добавить новые типы счетчиков:
-- - URL: /admin/meters/types
-- - Метод: POST
-{"meterType": ""}
+-
+    - URL: /admin/meters/types
+-
+    - Метод: POST
+      {"meterType": ""}
 
 - Просмотр всех пользователей:
-- - URL: /admin/users
-- - Метод: GET
+-
+    - URL: /admin/users
+-
+    - Метод: GET
 - Просмотр истории подачи показаний пользователя:
-- - URL: /admin/{usersname}/readings/history
-- - Метод: GET
+-
+    - URL: /admin/{username}/readings/history
+-
+    - Метод: GET
 - Получить актуальные показания:
-- - URL: /admin/{usersname}/readings/latest
-- - Метод: GET
+-
+    - URL: /admin/{username}/readings/latest
+-
+    - Метод: GET
 - Просмотр показаний пользователя за конкретный месяц:
-- - URL: /admin/{usersname}/readings/{year}/{month}
-- - Метод: GET
-
-
+-
+    - URL: /admin/{username}/readings/{year}/{month}
+-
+    - Метод: GET
 
 ## Инструкции по сборке и запуску
 
 - mvn clean package
 - docker-compose build
-- docker-compose run -i --rm your_app
+- docker-compose run your_app
 
 

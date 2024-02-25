@@ -1,8 +1,9 @@
 package org.wenant.service;
 
+import org.springframework.stereotype.Service;
 import org.wenant.domain.dto.UserDto;
-import org.wenant.domain.entity.User;
-import org.wenant.domain.repository.UserRepository;
+import org.wenant.domain.model.User;
+import org.wenant.domain.repository.interfaces.UserRepository;
 import org.wenant.mapper.UserMapper;
 
 import java.util.List;
@@ -10,17 +11,21 @@ import java.util.List;
 /**
  * Сервис для работы с пользователями.
  */
+@Service
 public class UserService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
     /**
      * Конструктор.
      *
      * @param userRepository Репозиторий пользователей.
      */
-    public UserService(UserRepository userRepository) {
+    public UserService(UserRepository userRepository,
+                       UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
     /**
@@ -29,7 +34,7 @@ public class UserService {
      * @return Список пользователей.
      */
     public List<UserDto> getAllUsers() {
-        return UserMapper.INSTANCE.userListToUserDtoList(userRepository.getAllUsers());
+        return userMapper.INSTANCE.userListToUserDtoList(userRepository.getAllUsers());
     }
 
     /**

@@ -1,20 +1,25 @@
 package org.wenant.service.in;
 
+import org.springframework.stereotype.Service;
 import org.wenant.domain.dto.RegistrationDto;
-import org.wenant.domain.entity.User;
-import org.wenant.domain.repository.UserRepository;
+import org.wenant.domain.model.User;
+import org.wenant.domain.repository.interfaces.UserRepository;
 import org.wenant.mapper.UserMapper;
 
 /**
  * Сервис регистрации новых пользователей.
  * Обеспечивает функциональность регистрации новых пользователей и проверку валидности вводимых данных.
  */
+@Service
 public class RegistrationService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
 
-    public RegistrationService(UserRepository userRepository) {
+    public RegistrationService(UserRepository userRepository,
+                               UserMapper userMapper) {
         this.userRepository = userRepository;
+        this.userMapper = userMapper;
     }
 
 
@@ -35,9 +40,7 @@ public class RegistrationService {
             return RegistrationResult.USERNAME_ALREADY_EXISTS;
         }
 
-        //User newUser = new User(null, username, password, User.Role.USER); // Роль "user" при регистрации
-        User newUser = UserMapper.INSTANCE.registrationDtoToUser(registrationDto);
-
+        User newUser = userMapper.INSTANCE.registrationDtoToUser(registrationDto);
         userRepository.addUser(newUser);
 
         return RegistrationResult.SUCCESS;

@@ -1,5 +1,7 @@
 package org.wenant.database;
 
+import org.wenant.config.YamlReader;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
@@ -18,10 +20,10 @@ public class DatabaseConnector {
      */
     public static Connection connection() throws SQLException {
         try {
-            Class.forName(DatabaseConfig.getDbDriver());
-            var URL = DatabaseConfig.getDbUrl();
-            var USER_NAME = DatabaseConfig.getDbUsername();
-            var PASSWORD = DatabaseConfig.getDbPassword();
+            Class.forName(YamlReader.getDbDriver());
+            var URL = YamlReader.getDbUrl();
+            var USER_NAME = YamlReader.getDbUsername();
+            var PASSWORD = YamlReader.getDbPassword();
 
             return DriverManager.getConnection(URL, USER_NAME, PASSWORD);
         } catch (SQLException e) {
