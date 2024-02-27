@@ -11,7 +11,6 @@ public class AuthenticationDto {
     private final String password;
 
 
-
     @JsonCreator
     public AuthenticationDto(@JsonProperty("username") String username,
                              @JsonProperty("password") String password) {

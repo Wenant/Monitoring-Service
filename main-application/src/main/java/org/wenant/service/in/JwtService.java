@@ -8,16 +8,17 @@ import org.wenant.domain.dto.AuthenticationDto;
 import org.wenant.domain.dto.UserDto;
 import org.wenant.domain.model.User;
 import org.wenant.service.UserService;
+import org.wenant.starter.service.JwtServiceInterface;
 
 @Service
-public class JwtService {
-    private final UserService userService;
+public class JwtService implements JwtServiceInterface {
     private static final String SECRET_KEY = YamlReader.getJwtSecret();
     private static final int BEARER_TOKEN_PREFIX_LENGTH = 7;
+    private final UserService userService;
+
     public JwtService(UserService userService) {
         this.userService = userService;
     }
-
 
 
     private JwtParser getParser() {

@@ -8,10 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.wenant.domain.dto.MeterTypeCatalogDto;
 import org.wenant.domain.dto.UserDto;
-import org.wenant.service.UserService;
 import org.wenant.service.in.AccessControlService;
-import org.wenant.service.in.MeterTypeCatalogService;
-import org.wenant.starter.annotations.EnableAudit;
 
 import java.util.List;
 import java.util.Map;
@@ -22,15 +19,10 @@ import java.util.Map;
 @RequestMapping("/admin/")
 public class AdminController {
 
-    private final MeterTypeCatalogService meterTypeCatalogService;
-    private final UserService userService;
+
     private final AccessControlService accessControlService;
 
-    public AdminController(MeterTypeCatalogService meterTypeCatalogService,
-                           UserService userService,
-                           AccessControlService accessControlService) {
-        this.meterTypeCatalogService = meterTypeCatalogService;
-        this.userService = userService;
+    public AdminController(AccessControlService accessControlService) {
         this.accessControlService = accessControlService;
     }
 

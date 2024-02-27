@@ -6,11 +6,13 @@ import org.wenant.domain.dto.MeterTypeCatalogDto;
 import org.wenant.domain.dto.ReadingDto;
 import org.wenant.domain.dto.UserDto;
 import org.wenant.service.UserService;
+import org.wenant.starter.annotations.EnableAudit;
 
 import java.time.YearMonth;
 import java.util.List;
 
 @Service
+@EnableAudit
 public class AccessControlService {
     private final JwtService jwtService;
     private final MeterReadingService meterReadingService;

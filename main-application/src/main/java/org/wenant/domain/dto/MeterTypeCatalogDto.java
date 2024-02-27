@@ -3,9 +3,10 @@ package org.wenant.domain.dto;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.wenant.starter.domain.audit.MeterTypeData;
 
 @JsonInclude
-public class MeterTypeCatalogDto {
+public class MeterTypeCatalogDto implements MeterTypeData {
     private final Long id;
     private final String meterType;
 

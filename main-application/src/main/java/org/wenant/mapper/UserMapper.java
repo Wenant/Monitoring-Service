@@ -2,7 +2,6 @@ package org.wenant.mapper;
 
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;
-import org.mapstruct.Named;
 import org.mapstruct.factory.Mappers;
 import org.wenant.domain.dto.AuthenticationDto;
 import org.wenant.domain.dto.RegistrationDto;
