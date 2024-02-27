@@ -10,7 +10,6 @@ public class MeterTypeCatalogDto implements MeterTypeData {
     private final Long id;
     private final String meterType;
 
-
     @JsonCreator
     public MeterTypeCatalogDto(
             @JsonProperty("id") Long id,

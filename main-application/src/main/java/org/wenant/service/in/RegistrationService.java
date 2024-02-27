@@ -40,7 +40,7 @@ public class RegistrationService {
             return RegistrationResult.USERNAME_ALREADY_EXISTS;
         }
 
-        User newUser = userMapper.INSTANCE.registrationDtoToUser(registrationDto);
+        User newUser = userMapper.registrationDtoToUser(registrationDto);
         userRepository.addUser(newUser);
 
         return RegistrationResult.SUCCESS;

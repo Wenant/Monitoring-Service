@@ -63,7 +63,7 @@ public class MeterReadingService {
      */
     public List<MeterReadingDto> getAllForUser(String username) {
         User user = userService.getUserByUsername(username);
-        return meterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getAllForUser(user));
+        return meterReadingMapper.meterReadingListToDtoList(meterReadingRepository.getAllForUser(user));
     }
 
     /**
@@ -75,7 +75,7 @@ public class MeterReadingService {
      */
     public List<MeterReadingDto> getByUserAndDate(String username, YearMonth date) {
         User user = userService.getUserByUsername(username);
-        return meterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getByUserAndDate(user, date));
+        return meterReadingMapper.meterReadingListToDtoList(meterReadingRepository.getByUserAndDate(user, date));
     }
 
     /**
@@ -86,7 +86,7 @@ public class MeterReadingService {
      */
     public List<MeterReadingDto> getLatestMeterReadings(String username) {
         User user = userService.getUserByUsername(username);
-        return meterReadingMapper.INSTANCE.meterReadingListToDtoList(meterReadingRepository.getLatestMeterReadings(user));
+        return meterReadingMapper.meterReadingListToDtoList(meterReadingRepository.getLatestMeterReadings(user));
     }
 
     /**

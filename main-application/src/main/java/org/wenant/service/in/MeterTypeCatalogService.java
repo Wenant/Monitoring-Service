@@ -14,6 +14,7 @@ import java.util.List;
  */
 @Service
 public class MeterTypeCatalogService {
+
     private final MeterTypeCatalogRepository meterTypeCatalogRepository;
     private final MeterTypeCatalogMapper meterTypeCatalogMapper;
 
@@ -46,7 +47,7 @@ public class MeterTypeCatalogService {
      */
     public List<MeterTypeCatalogDto> getMeterTypes() {
         List<MeterTypeCatalogDto> newCatalog =
-                meterTypeCatalogMapper.INSTANCE.meterTypeListToDtoList(meterTypeCatalogRepository.getAllMeterTypes());
+                meterTypeCatalogMapper.meterTypeListToDtoList(meterTypeCatalogRepository.getAllMeterTypes());
         return newCatalog;
     }
 

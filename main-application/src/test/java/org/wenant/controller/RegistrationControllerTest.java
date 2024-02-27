@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.wenant.domain.dto.RegistrationDto;
+import org.wenant.domain.dto.ResponseDto;
 import org.wenant.service.in.RegistrationService;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -50,12 +51,13 @@ class RegistrationControllerTest {
     @Test
     void testRegistration_Success() throws Exception {
         when(registrationService.registerUser(any())).thenReturn(RegistrationService.RegistrationResult.SUCCESS);
+        ResponseDto responseDto = new ResponseDto("result", "SUCCESS");
 
         MvcResult mvcResult = mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
                 .andExpect(status().isOk())
-                .andExpect(jsonPath("result").value("SUCCESS"))
+                .andExpect(jsonPath("message").value("SUCCESS"))
                 .andReturn();
     }
 
@@ -66,7 +68,7 @@ class RegistrationControllerTest {
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent)).andExpect(status().isBadRequest())
-                .andExpect(jsonPath("result").value("INVALID_PASSWORD"))
+                .andExpect(jsonPath("message").value("INVALID_PASSWORD"))
                 .andReturn();
     }
 
@@ -77,7 +79,7 @@ class RegistrationControllerTest {
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
-                .andExpect(jsonPath("result").value("INVALID_USERNAME"))
+                .andExpect(jsonPath("message").value("INVALID_USERNAME"))
                 .andReturn();
     }
 
@@ -88,7 +90,7 @@ class RegistrationControllerTest {
         mockMvc.perform(post("/registration")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonContent))
-                .andExpect(jsonPath("result").value("USERNAME_ALREADY_EXISTS"))
+                .andExpect(jsonPath("message").value("USERNAME_ALREADY_EXISTS"))
                 .andReturn();
     }
 

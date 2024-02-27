@@ -34,7 +34,7 @@ public class UserService {
      * @return Список пользователей.
      */
     public List<UserDto> getAllUsers() {
-        return userMapper.INSTANCE.userListToUserDtoList(userRepository.getAllUsers());
+        return userMapper.userListToUserDtoList(userRepository.getAllUsers());
     }
 
     /**

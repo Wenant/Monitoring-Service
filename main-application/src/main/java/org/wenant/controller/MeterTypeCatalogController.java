@@ -25,8 +25,7 @@ public class MeterTypeCatalogController {
         this.meterTypeCatalogService = meterTypeCatalogService;
     }
 
-
-    @Operation(summary = "Get Meter Types")
+    @Operation(summary = "Get all meter types")
     @GetMapping(produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<MeterTypeCatalogDto>> getMeterTypes() {
         List<MeterTypeCatalogDto> meterType = meterTypeCatalogService.getMeterTypes();
