@@ -1,6 +1,6 @@
 # Monitoring-Service
 
-Проект Monitoring-Service представляет собой консольное приложение для учета и отображения показаний счетчиков
+Проект Monitoring-Service представляет собой приложение для учета и отображения показаний счетчиков
 пользователей.
 
 ## Описание
@@ -76,17 +76,17 @@
     - Метод: GET
 - Просмотр истории подачи показаний пользователя:
 -
-    - URL: /admin/{username}/readings/history
+    - URL: /readings/history/{username}
 -
     - Метод: GET
 - Получить актуальные показания:
 -
-    - URL: /admin/{username}/readings/latest
+    - URL: /readings/latest/{username}
 -
     - Метод: GET
 - Просмотр показаний пользователя за конкретный месяц:
 -
-    - URL: /admin/{username}/readings/{year}/{month}
+    - URL: /readings/{year}/{month}/{username}
 -
     - Метод: GET
 

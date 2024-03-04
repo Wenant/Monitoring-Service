@@ -1,8 +1,0 @@
-db:
-  url: jdbc:postgresql://localhost:5431/ylab
-  username: myuser
-  password: mypassword
-  driver: org.postgresql.Driver
-jwt:
-  secret: p4+ah8Op5+GXShuqV6ZWGF4Go9S0UKtVbSbHy/RzFi8=
-
