@@ -12,15 +12,12 @@ import java.sql.SQLException;
 
 @SpringBootApplication
 public class MonitoringServiceApplication {
-
     public static void main(String[] args) {
         SpringApplication.run(MonitoringServiceApplication.class, args);
     }
-
     @Bean
     public JdbcAuditRepository auditRepository() throws SQLException {
         Connection connection = DatabaseConnector.connection();
         return new JdbcAuditRepository(connection);
     }
-
 }

@@ -51,13 +51,10 @@ public class AuditAspect {
                 case "addMeterType":
                     auditAddMeterType(args);
                     break;
-
-
             }
         } catch (Exception e) {
             System.out.println("Audit aspect error for " + methodName + ": " + e.getMessage());
         }
-
         return result;
     }
 
@@ -68,22 +65,25 @@ public class AuditAspect {
     }
 
     private void auditAddUser(Object[] args) {
+        String tableName = "users";
         UserData userData = (UserData) args[0];
         Long userId = auditRepository.getUserIdByUsername(userData.getUsername());
-        createAndSaveAudit("Insert", "users", userId, userData.getUsername());
+        createAndSaveAudit("Insert", tableName, userId, userData.getUsername());
     }
 
     private void auditAddMeterReading(Object[] args) {
-        MeterReadingData readings = (MeterReadingData) args[0];
-        createAndSaveAudit("Insert", "meter_readings", readings.getUserId(),
+        String tableName = "meter_readings";
+                MeterReadingData readings = (MeterReadingData) args[0];
+        createAndSaveAudit("Insert", tableName, readings.getUserId(),
                 readings.getMeterType() + ": " + readings.getValue());
     }
 
     private void auditAddMeterType(Object[] args) {
+        String tableName = "meter_type_catalog";
         MeterTypeData meterType = (MeterTypeData) args[0];
         String header = (String) args[1];
         String username = jwtService.getUsernameFromAuthorizationHeader(header);
         Long userId = auditRepository.getUserIdByUsername(username);
-        createAndSaveAudit("Insert", "meter_type_catalog", userId, meterType.getMeterType());
+        createAndSaveAudit("Insert", tableName, userId, meterType.getMeterType());
     }
 }

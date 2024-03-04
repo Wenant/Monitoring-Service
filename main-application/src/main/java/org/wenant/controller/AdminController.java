@@ -20,7 +20,6 @@ import java.util.List;
 @RequestMapping("/admin/")
 public class AdminController {
     private final AccessControlService accessControlService;
-
     public AdminController(AccessControlService accessControlService) {
         this.accessControlService = accessControlService;
     }
@@ -29,8 +28,7 @@ public class AdminController {
     @PostMapping(value = "/meters/types", consumes = MediaType.APPLICATION_JSON_VALUE)
     @Operation(
             summary = "Add new meter type",
-            description = "Add a new meter type. Requires admin authorization."
-    )
+            description = "Add a new meter type. Requires admin authorization.")
     public ResponseEntity<?> addNewMeterType(@RequestHeader(value = "Authorization") String authorizationHeader,
                                              @RequestBody MeterTypeCatalogDto meterTypeCatalogDto) {
         try {
@@ -44,8 +42,7 @@ public class AdminController {
     @GetMapping("/users")
     @Operation(
             summary = "Get all users",
-            description = "Retrieve a list of all users. Requires admin authorization."
-    )
+            description = "Retrieve a list of all users. Requires admin authorization.")
     public ResponseEntity<?> getAllUsers(@RequestHeader(value = "Authorization") String authorizationHeader) {
 
         try {

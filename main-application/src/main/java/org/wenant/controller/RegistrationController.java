@@ -44,7 +44,5 @@ public class RegistrationController {
                 return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(responseDto);
 
         }
-
     }
-
 }
