@@ -3,7 +3,7 @@ package org.wenant.service.in;
 import org.springframework.stereotype.Service;
 import org.wenant.domain.dto.RegistrationDto;
 import org.wenant.domain.model.User;
-import org.wenant.domain.repository.interfaces.UserRepository;
+import org.wenant.domain.repository.UserRepository;
 import org.wenant.mapper.UserMapper;
 
 /**

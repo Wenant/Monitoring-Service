@@ -1,10 +1,10 @@
-package org.wenant.domain.repository;
+package org.wenant.domain.repository.impl;
 
 import org.springframework.stereotype.Repository;
 import org.wenant.database.DatabaseConnector;
 import org.wenant.domain.model.User;
 import org.wenant.domain.model.User.Role;
-import org.wenant.domain.repository.interfaces.UserRepository;
+import org.wenant.domain.repository.UserRepository;
 import org.wenant.starter.annotations.EnableAudit;
 
 import java.sql.*;
@@ -16,7 +16,7 @@ import java.util.List;
  */
 @Repository
 @EnableAudit
-public class JdbcUserRepository implements UserRepository {
+public class UserRepositoryImpl implements UserRepository {
 
     private String getRoleForDb(User user) {
         return user.getRole().name();

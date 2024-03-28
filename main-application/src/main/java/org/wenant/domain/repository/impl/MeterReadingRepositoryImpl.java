@@ -1,12 +1,12 @@
-package org.wenant.domain.repository;
+package org.wenant.domain.repository.impl;
 
 import org.springframework.stereotype.Repository;
 import org.wenant.database.DatabaseConnector;
 import org.wenant.domain.model.MeterReading;
 import org.wenant.domain.model.MeterTypeCatalog;
 import org.wenant.domain.model.User;
-import org.wenant.domain.repository.interfaces.MeterReadingRepository;
-import org.wenant.domain.repository.interfaces.MeterTypeCatalogRepository;
+import org.wenant.domain.repository.MeterReadingRepository;
+import org.wenant.domain.repository.MeterTypeCatalogRepository;
 import org.wenant.starter.annotations.EnableAudit;
 
 import java.sql.*;
@@ -20,10 +20,10 @@ import java.util.List;
  */
 @Repository
 @EnableAudit
-public class JdbcMeterReadingRepository implements MeterReadingRepository {
+public class MeterReadingRepositoryImpl implements MeterReadingRepository {
     private final MeterTypeCatalogRepository meterTypeCatalogRepository;
 
-    public JdbcMeterReadingRepository(MeterTypeCatalogRepository meterTypeCatalogRepository) {
+    public MeterReadingRepositoryImpl(MeterTypeCatalogRepository meterTypeCatalogRepository) {
         this.meterTypeCatalogRepository = meterTypeCatalogRepository;
     }
 
@@ -41,8 +41,7 @@ public class JdbcMeterReadingRepository implements MeterReadingRepository {
     public void addMeterReading(MeterReading meterReading) {
         String sql = "INSERT INTO ylab_hw.meter_readings (user_id, value, date, meter_type_id) VALUES (?, ?, ?, ?)";
         try (Connection connection = DatabaseConnector.connection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
+            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setLong(1, meterReading.getUser().getId());
             preparedStatement.setDouble(2, meterReading.getValue());
             preparedStatement.setDate(3, getSqlDate(meterReading.getDate()));
@@ -61,7 +60,7 @@ public class JdbcMeterReadingRepository implements MeterReadingRepository {
         List<MeterReading> meterReadingList = new ArrayList<>();
 
         try (Connection connection = DatabaseConnector.connection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             preparedStatement.setLong(1, user.getId());
 

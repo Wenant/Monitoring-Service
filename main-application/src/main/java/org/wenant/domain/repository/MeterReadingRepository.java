@@ -1,4 +1,4 @@
-package org.wenant.domain.repository.interfaces;
+package org.wenant.domain.repository;
 
 import org.wenant.domain.model.MeterReading;
 import org.wenant.domain.model.MeterTypeCatalog;

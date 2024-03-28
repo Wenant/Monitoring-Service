@@ -1,9 +1,9 @@
-package org.wenant.domain.repository;
+package org.wenant.domain.repository.impl;
 
 import org.springframework.stereotype.Repository;
 import org.wenant.database.DatabaseConnector;
 import org.wenant.domain.model.MeterTypeCatalog;
-import org.wenant.domain.repository.interfaces.MeterTypeCatalogRepository;
+import org.wenant.domain.repository.MeterTypeCatalogRepository;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -13,7 +13,7 @@ import java.util.List;
  * Реализация репозитория для типов счетчиков через JDBC.
  */
 @Repository
-public class JdbcMeterTypeCatalogRepository implements MeterTypeCatalogRepository {
+public class MeterTypeCatalogRepositoryImpl implements MeterTypeCatalogRepository {
 
     @Override
     public void addMeterTypeCatalog(String meterType) {

@@ -3,7 +3,7 @@ package org.wenant.service.in;
 import org.springframework.stereotype.Service;
 import org.wenant.domain.dto.MeterTypeCatalogDto;
 import org.wenant.domain.model.MeterTypeCatalog;
-import org.wenant.domain.repository.interfaces.MeterTypeCatalogRepository;
+import org.wenant.domain.repository.MeterTypeCatalogRepository;
 import org.wenant.mapper.MeterTypeCatalogMapper;
 
 import java.util.List;

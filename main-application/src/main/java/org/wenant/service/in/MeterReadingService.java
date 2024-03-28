@@ -6,7 +6,7 @@ import org.wenant.domain.dto.ReadingDto;
 import org.wenant.domain.model.MeterReading;
 import org.wenant.domain.model.MeterTypeCatalog;
 import org.wenant.domain.model.User;
-import org.wenant.domain.repository.interfaces.MeterReadingRepository;
+import org.wenant.domain.repository.MeterReadingRepository;
 import org.wenant.mapper.MeterReadingMapper;
 import org.wenant.service.UserService;
 
